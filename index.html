@@ -32,7 +32,8 @@ select, input { padding: 10px; border: 1px solid #2563eb; border-radius: 8px; fo
 
   <section class="hero">
     <p>Upload your old electronics and we will tell you the best path for each one.</p>
-     <button onclick="location.href='#upload'">Upload an Item</button>/section>
+     <button onclick="location.href='#upload'">Upload an Item</button>
+  </section>
 
   <section class="cards">
     <div class="card"><h3>🔧 Repair</h3><p>Items that can be fixed and used again.</p></div>
@@ -69,6 +70,7 @@ select, input { padding: 10px; border: 1px solid #2563eb; border-radius: 8px; fo
   <h3>🔧 Repair</h3><div id="list-Repair"></div>
   <h3>🛒 Resale</h3><div id="list-Resale"></div>
   <h3>🏭 Recycle</h3><div id="list-Recycle"></div>
+      <button onclick="localStorage.removeItem('items'); showListings();" style="margin:16px;">Clear All Items</button>
 </section>
   <script>
 function sortItem(type, condition) {
