@@ -16,8 +16,13 @@
   .form-box { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
 .form-box h2 { color: #16a34a; }
 select, input { padding: 10px; border: 1px solid #2563eb; border-radius: 8px; font-size: 16px; }
-#result { font-weight: bold; color: #16a34a; }
-  </style>
+#result { font-weight: bold; color: #16a34a; }  .listings { padding: 16px; }
+.listings h2 { color: #16a34a; }
+.listings h3 { color: #2563eb; }
+.item { display: flex; gap: 10px; align-items: center; border: 1px solid #2563eb;
+        border-radius: 10px; padding: 8px; margin-bottom: 8px; }
+.item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; }
+    </style>
 </head>
 <body>
   <header>
@@ -59,6 +64,12 @@ select, input { padding: 10px; border: 1px solid #2563eb; border-radius: 8px; fo
   <button id="submitBtn">Submit Item</button>
   <p id="result"></p>
 </section>
+    <section class="listings">
+  <h2>Submitted Items</h2>
+  <h3>🔧 Repair</h3><div id="list-Repair"></div>
+  <h3>🛒 Resale</h3><div id="list-Resale"></div>
+  <h3>🏭 Recycle</h3><div id="list-Recycle"></div>
+</section>
   <script>
 function sortItem(type, condition) {
   if (type === "Battery") return "Recycle";   // batteries need special handling
@@ -66,6 +77,22 @@ function sortItem(type, condition) {
   if (condition === "repair") return "Repair";
   return "Recycle";
 }
+    function showListings() {
+  const items = JSON.parse(localStorage.getItem("items") || "[]");
+  ["Repair", "Resale", "Recycle"].forEach(function (cat) {
+    const box = document.getElementById("list-" + cat);
+    box.innerHTML = "";
+    items.filter(function (i) { return i.category === cat; })
+      .forEach(function (i) {
+        const label = i.type + " (" + i.condition + ")";
+        box.innerHTML += '<div class="item">' +
+          (i.photo ? '<img src="' + i.photo + '">' : "") +
+          "<span>" + label + "</span></div>";
+      });
+  });
+}
+showListings();
+    
 
 document.getElementById("submitBtn").onclick = function () {
   const type = document.getElementById("type").value;
@@ -79,6 +106,7 @@ document.getElementById("submitBtn").onclick = function () {
     localStorage.setItem("items", JSON.stringify(items));
     document.getElementById("result").textContent =
       "Sorted into: " + category + " ✅";
+    showListings();
   }
 
   if (!file) { save(""); return; }
