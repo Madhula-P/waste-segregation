@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E-Waste Segregation</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #ffffff; color: #1f2937; }
+    header { background: #16a34a; color: white; padding: 20px; text-align: center; }
+    .hero { padding: 24px; text-align: center; }
+    .cards { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
+    .card { border: 2px solid #2563eb; border-radius: 12px; padding: 16px; text-align: center; }
+    .card h3 { color: #2563eb; margin: 0 0 6px; }
+    button { background: #2563eb; color: white; border: none; padding: 12px 24px;
+             border-radius: 8px; font-size: 16px; }
+  .form-box { padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.form-box h2 { color: #16a34a; }
+select, input { padding: 10px; border: 1px solid #2563eb; border-radius: 8px; font-size: 16px; }
+#result { font-weight: bold; color: #16a34a; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>♻️ E-Waste Segregation</h1>
+    <p>Repair it. Resell it. Recycle it right.</p>
+  </header>
+
+  <section class="hero">
+    <p>Upload your old electronics and we will tell you the best path for each one.</p>
+     <button onclick="location.href='#upload'">Upload an Item</button>/section>
+
+  <section class="cards">
+    <div class="card"><h3>🔧 Repair</h3><p>Items that can be fixed and used again.</p></div>
+    <div class="card"><h3>🛒 Resale</h3><p>Working items sold customer to customer.</p></div>
+    <div class="card"><h3>🏭 Recycle</h3><p>Items handed to certified e-waste recyclers.</p></div>
+  </section>
+  <section class="form-box" id="upload">
+  <h2>Upload an Item</h2>
+  <label>Item type</label>
+  <select id="type">
+    <option>Breadboard</option>
+    <option>Motherboard</option>
+    <option>Cable / Wire</option>
+    <option>Charger / Adapter</option>
+    <option>Battery</option>
+    <option>Other</option>
+  </select>
+
+  <label>Condition</label>
+  <select id="condition">
+    <option value="working">Working</option>
+    <option value="repair">Needs repair</option>
+    <option value="notworking">Not working</option>
+  </select>
+
+  <label>Photo</label>
+  <input type="file" id="photo" accept="image/*">
+
+  <button id="submitBtn">Submit Item</button>
+  <p id="result"></p>
+</section>
+  <script>
+function sortItem(type, condition) {
+  if (type === "Battery") return "Recycle";   // batteries need special handling
+  if (condition === "working") return "Resale";
+  if (condition === "repair") return "Repair";
+  return "Recycle";
+}
+
+document.getElementById("submitBtn").onclick = function () {
+  const type = document.getElementById("type").value;
+  const condition = document.getElementById("condition").value;
+  const file = document.getElementById("photo").files[0];
+  const category = sortItem(type, condition);
+
+  function save(photo) {
+    const items = JSON.parse(localStorage.getItem("items") || "[]");
+    items.push({ type, condition, category, photo });
+    localStorage.setItem("items", JSON.stringify(items));
+    document.getElementById("result").textContent =
+      "Sorted into: " + category + " ✅";
+  }
+
+  if (!file) { save(""); return; }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const img = new Image();
+    img.onload = function () {
+      const c = document.createElement("canvas");
+      const scale = 300 / img.width;
+      c.width = 300; c.height = img.height * scale;
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      save(c.toDataURL("image/jpeg", 0.7));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+</script>
+</body>
+</html>
